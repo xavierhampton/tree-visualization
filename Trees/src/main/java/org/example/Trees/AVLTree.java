@@ -75,18 +75,27 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     private TreeNode rightRotate(Node n) {
         Node l = n.left;
-        Node r = n.right;
+        Node lr = l.right;
 
         l.right = n;
-        r.left = r;
+        n.left = lr;
 
         l.height = 1 + Math.max(l.left.height, l.right.height);
-        r.height = 1 + Math.max(l.right.height, l.left.height);
+        n.height = 1 + Math.max(n.right.height, n.left.height);
 
         return l;
     }
 
-    private TreeNode leftRotate() {
-        return null;
+    private TreeNode leftRotate(Node n) {
+        Node r = n.right;
+        Node rl = r.left;
+
+        r.left = n;
+        n.right = rl;
+
+        r.height = 1 + Math.max(r.left.height, r.right.height);
+        n.height = 1 + Math.max(n.right.height, n.left.height);
+
+        return r;
     }
 }
