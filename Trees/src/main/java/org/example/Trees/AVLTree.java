@@ -80,8 +80,8 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         l.right = n;
         n.left = lr;
 
-        l.height = 1 + Math.max(l.left.height, l.right.height);
-        n.height = 1 + Math.max(n.right.height, n.left.height);
+        l.height = 1 + Math.max(getHeight(l.left), getHeight(l.right));
+        n.height = 1 + Math.max(getHeight(n.left), getHeight(n.right));
 
         return l;
     }
@@ -93,9 +93,21 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         r.left = n;
         n.right = rl;
 
-        r.height = 1 + Math.max(r.left.height, r.right.height);
-        n.height = 1 + Math.max(n.right.height, n.left.height);
+        r.height = 1 + Math.max(getHeight(r.left), getHeight(r.right));
+        n.height = 1 + Math.max(getHeight(n.left), getHeight(n.right));
 
         return r;
+    }
+
+    private int getHeight(Node n) {
+        if (n == null) return 0;
+        return n.height;
+    }
+
+    private int getBalance(Node n) {
+        if (n == null) {
+            return 0;
+        }
+        return getHeight(n.left) - getHeight(n.right);
     }
 }
