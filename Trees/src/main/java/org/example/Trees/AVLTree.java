@@ -27,10 +27,13 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
         public String getColor() { return null; }
     }
+    private Node root;
+    private int size;
 
     @Override
-    public void insert(Comparable value) {
-
+    public void insert(T value) {
+        this.root = insert(this.root, value);
+        size++;
     }
 
     @Override
@@ -65,15 +68,60 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public Color color() {
-        return null;
+        return Color.PURPLE;
     }
 
     @Override
     public TreeNode getRoot() {
-        return null;
+        return this.root;
     }
 
-    private TreeNode rightRotate(Node n) {
+    private Node insert(Node n, T value) {
+        if (n == null) {
+            return new Node(value);
+        }
+
+        //Insert into correct position
+        if (value.compareTo(n.value) < 0) {
+            n.left = insert(n.left, value);
+        } else if (value.compareTo(n.value) > 0) {
+            n.right = insert(n.right, value);
+        }
+        else {
+            return n;
+        }
+
+
+        n.height = 1 + Math.max(getHeight(n.left), getHeight(n.right));
+
+        int balance = getBalance(n);
+
+        //If node is unbalanced perform rotations.
+
+        //Left Left
+        if (balance >= 1 && value.compareTo(n.left.value) < 0) {
+            return rightRotate(n);
+        }
+        //Right Right
+        else if (balance <= -1 && value.compareTo(n.right.value) > 0) {
+            return leftRotate(n);
+        }
+        //Left Right
+        else if (balance >= 1 && value.compareTo(n.left.value) > 0) {
+            n.left = leftRotate(n);
+            return rightRotate(n);
+        }
+        //Right Left
+        else if (balance <= -1 && value.compareTo(n.right.value) < 0) {
+            n.right = rightRotate(n);
+            return leftRotate(n);
+        }
+
+        return n;
+
+    }
+
+    private Node rightRotate(Node n) {
         Node l = n.left;
         Node lr = l.right;
 
@@ -86,7 +134,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         return l;
     }
 
-    private TreeNode leftRotate(Node n) {
+    private Node leftRotate(Node n) {
         Node r = n.right;
         Node rl = r.left;
 
