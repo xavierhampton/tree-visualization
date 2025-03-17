@@ -3,6 +3,7 @@ package org.example.Trees;
 import javafx.scene.paint.Color;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable {
@@ -42,20 +43,13 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
     }
 
     @Override
-    public boolean contains(Comparable value) {
-        List nodes = this.inorderTraversal();
-        for (Object node : nodes) {
-            if (((Comparable) node).compareTo(value) == 0) {
-                return true;
-            }
-        }
-        return false;
-
+    public boolean contains(Comparable value) {return contains(this.root, value);
     }
 
     @Override
     public void clear() {
-
+        root = null;
+        size = 0;
     }
 
     @Override
@@ -65,7 +59,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public List inorderTraversal() {
-        return List.of();
+        List<T> result = new ArrayList<>();
+        inorderTraversal(root, result);
+        return result;
     }
 
     @Override
@@ -164,5 +160,25 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
             return 0;
         }
         return getHeight(n.left) - getHeight(n.right);
+    }
+    private boolean contains(Node node, Comparable value) {
+        if (node == null) {
+            return false;
+        }
+        if (value.compareTo(node.value) == 0) {
+            return true;
+        } else if (value.compareTo(node.value) < 0) {
+            return contains(node.left, value);
+        } else {
+            return contains(node.right, value);
+        }
+    }
+
+    private void inorderTraversal(Node node, List<T> result) {
+        if (node != null) {
+            inorderTraversal(node.left, result);
+            result.add(node.value);
+            inorderTraversal(node.right, result);
+        }
     }
 }
