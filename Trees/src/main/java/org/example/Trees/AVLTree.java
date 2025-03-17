@@ -13,7 +13,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         int height;
 
         Node(T value) {
-            this.value = value;
+            this.value = value; this.height = 1;
         }
 
         @Override
@@ -43,7 +43,14 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public boolean contains(Comparable value) {
+        List nodes = this.inorderTraversal();
+        for (Object node : nodes) {
+            if (((Comparable) node).compareTo(value) == 0) {
+                return true;
+            }
+        }
         return false;
+
     }
 
     @Override
@@ -99,20 +106,20 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         //If node is unbalanced perform rotations.
 
         //Left Left
-        if (balance >= 1 && value.compareTo(n.left.value) < 0) {
+        if (balance > 1 && value.compareTo(n.left.value) < 0) {
             return rightRotate(n);
         }
         //Right Right
-        else if (balance <= -1 && value.compareTo(n.right.value) > 0) {
+        else if (balance < -1 && value.compareTo(n.right.value) > 0) {
             return leftRotate(n);
         }
         //Left Right
-        else if (balance >= 1 && value.compareTo(n.left.value) > 0) {
+        else if (balance > 1 && value.compareTo(n.left.value) > 0) {
             n.left = leftRotate(n);
             return rightRotate(n);
         }
         //Right Left
-        else if (balance <= -1 && value.compareTo(n.right.value) < 0) {
+        else if (balance < -1 && value.compareTo(n.right.value) < 0) {
             n.right = rightRotate(n);
             return leftRotate(n);
         }
