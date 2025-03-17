@@ -54,7 +54,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public String type() {
-        return "";
+        return "AVL";
     }
 
     @Override
@@ -102,21 +102,22 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         //If node is unbalanced perform rotations.
 
         //Left Left
-        if (balance > 1 && value.compareTo(n.left.value) < 0) {
+        if (balance > 1 && value.compareTo(n.getLeft().getValue()) < 0) {
             return rightRotate(n);
+
         }
         //Right Right
-        else if (balance < -1 && value.compareTo(n.right.value) > 0) {
+        if (balance < -1 && value.compareTo(n.getRight().getValue()) > 0) {
             return leftRotate(n);
         }
         //Left Right
-        else if (balance > 1 && value.compareTo(n.left.value) > 0) {
-            n.left = leftRotate(n);
+        if (balance > 1 && value.compareTo(n.getLeft().getValue()) > 0) {
+            n.left = leftRotate(n.left);
             return rightRotate(n);
         }
         //Right Left
-        else if (balance < -1 && value.compareTo(n.right.value) < 0) {
-            n.right = rightRotate(n);
+        if (balance < -1 && value.compareTo(n.getRight().getValue()) < 0) {
+            n.right = rightRotate(n.right);
             return leftRotate(n);
         }
 
@@ -131,8 +132,8 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         l.right = n;
         n.left = lr;
 
-        l.height = 1 + Math.max(getHeight(l.left), getHeight(l.right));
         n.height = 1 + Math.max(getHeight(n.left), getHeight(n.right));
+        l.height = 1 + Math.max(getHeight(l.left), getHeight(l.right));
 
         return l;
     }
@@ -144,10 +145,11 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         r.left = n;
         n.right = rl;
 
-        r.height = 1 + Math.max(getHeight(r.left), getHeight(r.right));
         n.height = 1 + Math.max(getHeight(n.left), getHeight(n.right));
+        r.height = 1 + Math.max(getHeight(r.left), getHeight(r.right));
 
         return r;
+
     }
 
     private int getHeight(Node n) {
