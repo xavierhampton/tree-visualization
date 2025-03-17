@@ -39,7 +39,9 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public boolean delete(Comparable value) {
-        return false;
+        int beginSize = size;
+        root = delete(this.root, value);
+        return beginSize > size;
     }
 
     @Override
@@ -182,5 +184,82 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
             result.add(node.value);
             inorderTraversal(node.right, result);
         }
+    }
+
+    private Node delete(Node node, Comparable value) {
+        if (node == null) {
+            return null;
+        }
+
+        //If Less Than Go Left
+        if (value.compareTo(node.value) < 0) {
+            node.left = delete(node.left, value);
+        }
+        //If Greater Than, Go Right
+        else if (value.compareTo(node.value) > 0) {
+            node.right = delete(node.right, value);
+        }
+
+        //BST DELETION
+        else {
+            //NO CHILDREN
+            if (node.left == null && node.right == null) {
+                node = null;
+                size--;
+            }
+
+            //ONE CHILD
+            else if (node.left == null || node.right == null) {
+                Node nonNull = node.left != null ? node.left : node.right;
+
+                node.right = nonNull.right;
+                node.left = nonNull.left;
+                node.value = nonNull.value;
+
+                size--;
+
+            }
+            //TWO CHILDREN
+            else {
+                //Swap with Successor and delete it
+                Node successor = findMinNode(node.right);
+                node.value = successor.value;
+
+                node.right = delete(node.right, node.value);
+            }
+
+        }
+
+        if (node == null) {
+            return null;
+        }
+        int balance = getBalance(node);
+
+        //Left Left
+        if (balance > 1 && getBalance(node.left) >= 0)
+            return rightRotate(node);
+        //Right Right
+        if (balance < -1 && getBalance(node.right) > 0)
+            return leftRotate(node);
+        //Left Right
+        if (balance > 1 && getBalance(node.left) <= 0) {
+            node.left = leftRotate(node.left);
+            return rightRotate(node);
+        }
+        //Right Left
+        if (balance < -1 && getBalance(node.right) > 0) {
+            node.right = rightRotate(node.right);
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+    private Node findMinNode(Node n) {
+        Node min = n;
+        while (min.left != null) {
+            min = min.left;
+        }
+        return min;
+
     }
 }
