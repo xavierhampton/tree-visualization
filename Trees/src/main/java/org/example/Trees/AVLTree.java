@@ -210,12 +210,13 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
             //ONE CHILD
             else if (node.left == null || node.right == null) {
-                Node nonNull = node.left != null ? node.left : node.right;
-
-                node.right = nonNull.right;
-                node.left = nonNull.left;
-                node.value = nonNull.value;
-
+//                Node nonNull = node.left != null ? node.left : node.right;
+//
+//                node.right = nonNull.right;
+//                node.left = nonNull.left;
+//                node.value = nonNull.value;
+//
+                node = node.left != null ? node.left : node.right;
                 size--;
 
             }
@@ -233,16 +234,20 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         if (node == null) {
             return null;
         }
+
+        node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+
         int balance = getBalance(node);
+        System.out.println(balance);
 
         //Left Left
         if (balance > 1 && getBalance(node.left) >= 0)
             return rightRotate(node);
         //Right Right
-        if (balance < -1 && getBalance(node.right) > 0)
+        if (balance < -1 && getBalance(node.right) <= 0)
             return leftRotate(node);
         //Left Right
-        if (balance > 1 && getBalance(node.left) <= 0) {
+        if (balance > 1 && getBalance(node.left) < 0) {
             node.left = leftRotate(node.left);
             return rightRotate(node);
         }
@@ -254,6 +259,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
         return node;
     }
+
     private Node findMinNode(Node n) {
         Node min = n;
         while (min.left != null) {
