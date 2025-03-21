@@ -53,7 +53,7 @@ public class MaxHeap<T extends Comparable<T>> extends Heap<T> {
     //Returns type of tree
     @Override
     public String type() {
-        return "MaxHeap";
+        return "Max Heap";
     }
 
     //Returns set color

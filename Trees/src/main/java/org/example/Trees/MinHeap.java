@@ -53,7 +53,7 @@ public class MinHeap<T extends Comparable<T>> extends Heap<T> {
     //Returns type of tree
     @Override
     public String type() {
-        return "MinHeap";
+        return "Min Heap";
     }
 
     //Returns set color
