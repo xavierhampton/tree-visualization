@@ -34,6 +34,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
             return right;
         }
 
+        //Gives the color of the node
         public String getColor() {
             if (color.equals("red")) {
                 return "RED";
@@ -45,10 +46,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
     }
 
     private Node root;
+    private int size;
 
-
+    //It there's a root it sets it to that and if not it recursively calls another insert to insert it into the tree
     @Override
     public void insert(T value) {
+        size++;
         if (this.root == null) {
             this.root = new Node(value);
             this.root.color = "black";
@@ -58,14 +61,17 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         }
     }
 
+    //Creating flags for when rotations are needed
     boolean llRotationNeeded = false;
     boolean rrRotationNeeded = false;
     boolean lrRotationNeeded = false;
     boolean rlRotationNeeded = false;
 
     private Node insert(Node node, T value) {
+        //Flag made if there is a double red
         boolean rrConflict = false;
 
+        //Inserts the node and finds the conflicts as it is traveling down
         if (node == null) {
             return new Node(value);
         }
@@ -88,6 +94,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
             }
         }
 
+        //Doing proper rotates if we found errors while inserting
         if (llRotationNeeded == true) {
             node = rotateLeft(node);
             node.color = "black";
@@ -117,6 +124,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
             lrRotationNeeded = false;
         }
 
+        //Resolving the red red conflict
         if (rrConflict == true) {
             if (node.parent.right == node) {
                 if (node.parent.left == null || node.parent.left.color.equals("black")) {
@@ -154,9 +162,11 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
             }
             rrConflict = false;
         }
+        //returns the node
         return(node);
     }
 
+    //Performs a left rotation
     private Node rotateLeft(Node node) {
         Node temp1 = node.right;
         Node temp2 = temp1.left;
@@ -169,6 +179,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         return temp1;
     }
 
+    //Performs a right rotation
     private Node rotateRight(Node node) {
         Node temp1 = node.left;
         Node temp2 = temp1.right;
@@ -181,6 +192,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         return temp1;
     }
 
+    //Finds if there is a value in the tree
     private boolean contains(Node node, Comparable value) {
         if (node == null) {
             return false;
@@ -191,6 +203,15 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
             return contains(node.left, value);
         } else {
             return contains(node.right, value);
+        }
+    }
+
+    //performs an inorder traversal
+    private void inorderTraversal(Node node, List<T> result) {
+        if (node != null) {
+            inorderTraversal(node.left, result);
+            result.add(node.value);
+            inorderTraversal(node.right, result);
         }
     }
 
@@ -207,16 +228,19 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
     @Override
     public void clear() {
         root = null;
+        size = 0;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
-    public List<T> inorderTraversal() {
-        return List.of();
+    public List inorderTraversal() {
+        List<T> result = new ArrayList<>();
+        inorderTraversal(root, result);
+        return result;
     }
 
     @Override
