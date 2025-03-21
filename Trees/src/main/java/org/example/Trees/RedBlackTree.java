@@ -218,7 +218,9 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
 
     @Override
     public boolean delete(T value) {
-        return false;
+        int beginSize = size;
+        root = delete(this.root, value);
+        return (beginSize > size);
     }
 
     @Override
@@ -258,10 +260,54 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         return this.root;
     }
 
+    private Node delete(Node node, Comparable value) {
+        if (node == null) {
+            return null;
+        }
 
+        //If Less Than Go Left
+        if (value.compareTo(node.value) < 0) {
+            node.left = delete(node.left, value);
+        }
+        //If Greater Than, Go Right
+        else if (value.compareTo(node.value) > 0) {
+            node.right = delete(node.right, value);
+        }
 
+        //BST DELETION
+        else {
+            //NO CHILDREN
+            if (node.left == null && node.right == null) {
+                node = null;
+                size--;
+            }
 
+            //ONE CHILD
+            else if (node.left == null || node.right == null) {
+                node = node.left != null ? node.left : node.right;
+                size--;
 
+            }
+            //TWO CHILDREN
+            else {
+                //Swap with Successor and delete it
+                Node successor = findMinNode(node.right);
+                node.value = successor.value;
+
+                node.right = delete(node.right, node.value);
+            }
+
+        }
+        return node;
+    }
+    private Node findMinNode(Node n) {
+        Node min = n;
+        while (min.left != null) {
+            min = min.left;
+        }
+        return min;
+
+    }
 }
 
 
