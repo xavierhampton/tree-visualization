@@ -44,137 +44,137 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
 
     @Override
     public void insert(T value) {
-        Node newNode = new Node(value);
-        this.root = insert(this.root, newNode);
-        fixViolations(newNode);
+        if (this.root == null) {
+            this.root = new Node(value);
+            this.root.color = "black";
+        }
+        else {
+            this.root = insert(this.root, value);
+        }
     }
 
-    private Node insert(Node node, Node newNode) {
+    boolean llRotationNeeded = false;
+    boolean rrRotationNeeded = false;
+    boolean lrRotationNeeded = false;
+    boolean rlRotationNeeded = false;
+
+    private Node insert(Node node, T value) {
+        boolean rrConflict = false;
+
         if (node == null) {
-            return newNode;
+            return new Node(value);
         }
-        if (newNode.value.compareTo(node.value) < 0) {
-            node.left = insert(node.left, newNode);
+        else if ( value.compareTo(node.getValue()) < 0) {
+            node.left = insert(node.left, value);
             node.left.parent = node;
+            if (node != this.root) {
+                if (node.color.equals("red") && node.left.color.equals("red")) {
+                    rrConflict = true;
+                }
+            }
         }
-        else if (newNode.value.compareTo(node.value) > 0) {
-            node.right = insert(node.right, newNode);
+        else {
+            node.right = insert(node.right, value);
             node.right.parent = node;
+            if (node != this.root) {
+                if (node.color.equals("red") && node.right.color.equals("red")) {
+                    rrConflict = true;
+                }
+            }
         }
-        return node;
-    }
 
-    private void fixViolations(Node node) {
-        Node parent = node.parent;
-        Node uncle;
-        if (node != root && parent.getColor().equals("red")) {
-            Node grandParent = node.parent.parent;
-            if (grandParent.left == parent) {
-                uncle = grandParent.right;
+        if (llRotationNeeded == true) {
+            node = rotateLeft(node);
+            node.color = "black";
+            node.left.color = "red";
+            llRotationNeeded = false;
+        }
+        else if (rrRotationNeeded == true) {
+            node = rotateRight(node);
+            node.color = "black";
+            node.right.color = "red";
+            rrRotationNeeded = false;
+        }
+        else if (rlRotationNeeded == true) {
+            node.right = rotateRight(node.right);
+            node.right.parent = node;
+            node = rotateLeft(node);
+            node.color = "black";
+            node.left.color = "red";
+            rlRotationNeeded = false;
+        }
+        else if (lrRotationNeeded == true) {
+            node.left = rotateLeft(node.left);
+            node.left.parent = node;
+            node = rotateRight(node);
+            node.color = "black";
+            node.right.color = "red";
+            lrRotationNeeded = false;
+        }
+
+        if (rrConflict == true) {
+            if (node.parent.right == node) {
+                if (node.parent.left == null || node.parent.left.color.equals("black")) {
+                    if (node.left != null && node.left.color.equals("red")) {
+                        rlRotationNeeded = true;
+                    }
+                    else if (node.right != null && node.right.color.equals("red")) {
+                        llRotationNeeded = true;
+                    }
+                }
+                else {
+                    node.parent.left.color = "black";
+                    node.color = "black";
+                    if (node.parent != this.root) {
+                        node.parent.color = "red";
+                    }
+                }
             }
             else {
-                uncle = grandParent.left;
+                if (node.parent.right == null || node.parent.right.color.equals("black")) {
+                    if (node.left != null && node.left.color.equals("red")) {
+                        rrRotationNeeded = true;
+                    }
+                    else if (node.right != null && node.right.color.equals("red")) {
+                        lrRotationNeeded = true;
+                    }
+                }
+                else {
+                    node.parent.right.color = "black";
+                    node.color = "black";
+                    if (node.parent != this.root) {
+                        node.parent.color = "red";
+                    }
+                }
             }
-
-            if (uncle != null && uncle.getColor().equals("red")) {
-                reColor(parent, uncle, grandParent);
-            }
-            else if (parent.left == node) {
-                leftRotateRecolor(parent, uncle, grandParent);
-            }
-            else if (parent.left != node) {
-                rightRotateRecolor(parent, uncle, grandParent);
-            }
+            rrConflict = false;
         }
-        root.color = "black";
+        return(node);
     }
 
-    private void reColor(Node parent, Node uncle, Node grandParent) {
-        swapColor(parent);
-        swapColor(uncle);
-        swapColor(grandParent);
-        fixViolations(grandParent);
+    private Node rotateLeft(Node node) {
+        Node temp1 = node.right;
+        Node temp2 = temp1.left;
+        temp1.left = node;
+        node.right = temp2;
+        node.parent  = temp1;
+        if (temp2 != null) {
+            temp2.parent = node;
+        }
+        return temp1;
     }
 
-    private void swapColor(Node node) {
-        if (node.color.equals("red")) {
-            node.color = "black";
+    private Node rotateRight(Node node) {
+        Node temp1 = node.left;
+        Node temp2 = temp1.right;
+        temp1.right = node;
+        node.left = temp2;
+        node.parent  = temp1;
+        if (temp2 != null) {
+            temp2.parent = node;
         }
-        else {
-            node.color = "red";
-        }
+        return temp1;
     }
-
-    private void leftRotateRecolor(Node node, Node parent, Node grandParent) {
-        if (node.right == parent) {
-            rotateLeft(parent);
-        }
-
-        swapColor(parent);
-        swapColor(grandParent);
-        rotateRight(grandParent);
-        if (node.left == parent) {
-            fixViolations(parent);
-        }
-        else {
-            fixViolations(grandParent);
-        }
-
-    }
-
-    private void rightRotateRecolor(Node node, Node parent, Node grandParent) {
-        if (node.left == parent) {
-            rotateRight(parent);
-        }
-
-        swapColor(parent);
-        swapColor(grandParent);
-        rotateLeft(grandParent);
-        if (node.left == parent) {
-            fixViolations(grandParent);
-        }
-        else {
-            fixViolations(parent);
-        }
-
-    }
-
-    private void rotateRight(Node node) {
-        Node leftNode = node.left;
-        node.left = leftNode.right;
-        if (node.left != null) {
-            node.left.parent = node;
-        }
-        leftNode.right = node;
-        leftNode.parent = node.parent;
-        updateChildren(node, leftNode);
-        node.parent = leftNode;
-    }
-
-    private void rotateLeft(Node node) {
-        Node rightNode = node.right;
-        node.right = rightNode.left;
-        if (node.right != null) {
-            node.right.parent = node;
-        }
-        rightNode.left = node;
-        rightNode.parent = node.parent;
-        updateChildren(node, rightNode);
-        node.parent = rightNode;
-    }
-
-    private void updateChildren(Node node, Node temp) {
-        if (node.parent == null) {
-            root = temp;
-        }
-        else if (node.parent.left == node) {
-            node.parent.left = temp;
-        }
-        else {
-            node.parent.right = temp;
-        }
-    }
-
 
 
     @Override
@@ -184,7 +184,10 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
 
     @Override
     public boolean contains(T value) {
-        return false;
+        if (this.root == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
