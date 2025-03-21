@@ -68,7 +68,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
 
     @Override
     public String type() {
-        return "AVL";
+        return "AVL Tree";
     }
 
     @Override
