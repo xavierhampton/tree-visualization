@@ -26,7 +26,7 @@ public class AVLTree<T extends Comparable<T>> implements Tree<T> , Serializable 
         @Override
         public TreeNode<T> getRight() { return right; }
 
-        public String getColor() { return null; }
+        public String getColor() { return null;}
     }
     private Node root;
     private int size;

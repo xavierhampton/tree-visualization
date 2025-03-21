@@ -35,7 +35,12 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         }
 
         public String getColor() {
-            return this.color;
+            if (color.equals("red")) {
+                return "RED";
+            }
+            else {
+                return "BLACK";
+            }
         }
     }
 
@@ -176,6 +181,19 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         return temp1;
     }
 
+    private boolean contains(Node node, Comparable value) {
+        if (node == null) {
+            return false;
+        }
+        if (value.compareTo(node.value) == 0) {
+            return true;
+        } else if (value.compareTo(node.value) < 0) {
+            return contains(node.left, value);
+        } else {
+            return contains(node.right, value);
+        }
+    }
+
 
     @Override
     public boolean delete(T value) {
@@ -183,11 +201,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
     }
 
     @Override
-    public boolean contains(T value) {
-        if (this.root == null) {
-            return false;
-        }
-        return true;
+    public boolean contains(Comparable value) {return contains(this.root, value);
     }
 
     @Override
