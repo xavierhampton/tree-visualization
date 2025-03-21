@@ -65,7 +65,19 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
     }
 
     @Override
-    public boolean contains(T value) { return contains(this.root, value);
+    public boolean contains(T value) {
+
+    while (temp.left != null && temp.right != null) {
+        if (temp.value.equals(value)) {
+            return true;
+    }
+        else if () {
+
+        }
+    }
+
+
+    return false;
     }
 
     @Override
@@ -128,13 +140,42 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
                 Node y = x.parent.parent.right;
                 if (y.color.equals("red")) {
                     x.parent.color = "black";
-                    y.color = "red";
+                    y.color = "black";
+                    x.parent.parent.color = "red";
+                    x = x.parent.parent;
                 }
+                else {
+                    if (x == x.parent.right) {
+                        x = x.parent;
+                    }
+                    rotateLeft(x);
+                    x.parent.color = "black";
+                    x.parent.parent.color = "red";
+                    rotateRight(x.parent.parent);
+                }
+            }
+            else {
+                Node y = x.parent.parent.left;
+                if (y.color.equals("red")) {
+                    x.parent.color = "black";
+                    y.color = "black";
+                    x.parent.parent.color = "red";
+                    x = x.parent.parent;
+                }
+                else {
+                    if (x == x.parent.left) {
+                        x = x.parent;
+                    }
+                    rotateRight(x);
+                    x.parent.color = "black";
+                    x.parent.parent.color = "red";
+                    rotateLeft(x.parent.parent);
             }
         }
 
 
     }
+        root.color = "black";
 
 
 }
