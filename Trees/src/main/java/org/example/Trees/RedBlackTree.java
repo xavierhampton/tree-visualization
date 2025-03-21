@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializable {
 
-    private class Node implements TreeNode<T> , Serializable{
+    private class Node implements TreeNode<T>, Serializable {
         T value;
         Node left, right;
         Node parent;
@@ -20,34 +20,44 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         }
 
         @Override
-        public T getValue() { return value; }
+        public T getValue() {
+            return value;
+        }
 
         @Override
-        public TreeNode<T> getLeft() { return left; }
+        public TreeNode<T> getLeft() {
+            return left;
+        }
 
         @Override
-        public TreeNode<T> getRight() { return right; }
+        public TreeNode<T> getRight() {
+            return right;
+        }
 
-        public String getColor() { return this.color; }
+        public String getColor() {
+            return this.color;
+        }
     }
 
     private Node root;
-    private Node temp;
-
 
 
     @Override
     public void insert(T value) {
+        Node temp = this.root;
         if (this.root == null) {
             this.root = new Node(value);
             this.root.color = "black";
+            return;
         }
+
         else {
+
             //Binary Search
-            Node x = new Node(value);
-            temp = root;
-            while((temp.left != null) && (temp.right != null)) {
-                if (value.compareTo(temp.left.value) < 0) {
+            Node parent = null;
+            while (temp != null) {
+                parent = temp;
+                if (value.compareTo(temp.value) < 0) {
                     temp = temp.left;
                 }
                 else {
@@ -55,8 +65,20 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
                 }
             }
 
+            //Create node
+            Node x = new Node(value);
+            x.parent = parent;
+
+            if (value.compareTo(parent.value) < 0) {
+                parent.left = x;
+            }
+            else{
+                parent.right = x;
+            }
+
             insert(this.root, x);
         }
+
     }
 
     @Override
@@ -66,18 +88,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
 
     @Override
     public boolean contains(T value) {
-
-    while (temp.left != null && temp.right != null) {
-        if (temp.value.equals(value)) {
-            return true;
-    }
-        else if () {
-
-        }
-    }
-
-
-    return false;
+        return false;
     }
 
     @Override
@@ -116,10 +127,10 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         x.left = n;
         n.right = y;
         n.parent = x;
-        if(y != null) {
+        if (y != null) {
             y.parent = n;
         }
-        return(x);
+        return (x);
     }
 
     private Node rotateRight(Node n) {
@@ -128,13 +139,13 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
         x.right = n;
         n.left = y;
         n.parent = x;
-        if(y != null) {
+        if (y != null) {
             y.parent = n;
         }
-        return(x);
+        return (x);
     }
 
-    private Node insert(Node T, Node x) {
+    private void insert(Node T, Node x) {
         while (x != root && x.parent.color.equals("red")) {
             if (x.parent == x.parent.parent.left) {
                 Node y = x.parent.parent.right;
@@ -143,8 +154,7 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
                     y.color = "black";
                     x.parent.parent.color = "red";
                     x = x.parent.parent;
-                }
-                else {
+                } else {
                     if (x == x.parent.right) {
                         x = x.parent;
                     }
@@ -153,16 +163,14 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
                     x.parent.parent.color = "red";
                     rotateRight(x.parent.parent);
                 }
-            }
-            else {
+            } else {
                 Node y = x.parent.parent.left;
                 if (y.color.equals("red")) {
                     x.parent.color = "black";
                     y.color = "black";
                     x.parent.parent.color = "red";
                     x = x.parent.parent;
-                }
-                else {
+                } else {
                     if (x == x.parent.left) {
                         x = x.parent;
                     }
@@ -170,13 +178,15 @@ public class RedBlackTree<T extends Comparable<T>> implements Tree<T> , Serializ
                     x.parent.color = "black";
                     x.parent.parent.color = "red";
                     rotateLeft(x.parent.parent);
+                }
             }
+
+
         }
+        root.color = "black";
 
 
     }
-        root.color = "black";
-
 
 }
 
