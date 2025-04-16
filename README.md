@@ -18,7 +18,7 @@ Each data structure includes dynamic operations with visualization:
 
 ## 🖼️ Demo
 
-> 
+<img src="https://github.com/xavierhampton/tree-visualization/blob/demo/assets/rbt-demo.png"  width=300/>
 
 ## 🚀 Getting Started
 
